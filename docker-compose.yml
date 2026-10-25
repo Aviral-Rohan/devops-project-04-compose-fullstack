@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - API_URL=http://api:8000
+    depends_on:
+      - api
+
+  api:
+    build: ./api
+    ports:
+      - "5000:8000"
+    environment:
+      - MONGO_URL=mongodb://brewcart:brewcart123@localhost:27017/?authSource=admin
+    depends_on:
+      - mongo
+
+  db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=brewcart
+      - MONGO_INITDB_ROOT_PASSWORD=brewcart123
+    volumes:
+      - mongo-data:/data/database
+
+volumes:
+  mongo-data:
