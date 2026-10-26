@@ -8,24 +8,27 @@ services:
     depends_on:
       - frontend
       - api
+    networks:
+      - edge
 
   frontend:
     build: ./frontend
-    ports:
-      - "3000:3000"
     environment:
       - API_URL=http://api:8000
     depends_on:
       - api
+    networks:
+      - edge
 
   api:
     build: ./api
-    ports:
-      - "5050:8000"
     environment:
       - MONGO_URL=mongodb://brewcart:brewcart123@db:27017/?authSource=admin
     depends_on:
       - db
+    networks:
+      - edge
+      - backend
 
   db:
     image: mongo:8.3
@@ -34,6 +37,13 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=brewcart123
     volumes:
       - mongo-data:/data/db
+    networks:
+      - backend
+
+networks:
+  edge:
+  backend:
+    internal: true
 
 volumes:
   mongo-data:
